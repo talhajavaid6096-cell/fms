@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livestock Farm Management System - فارم مینجمنٹ سسٹم</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Poppins & Noto Nastaliq Urdu / Noto Sans Urdu -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Urdu:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', 'Noto Sans Urdu', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .urdu-font {
+            font-family: 'Noto Sans Urdu', sans-serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 flex h-screen overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="w-64 bg-emerald-900 text-white flex flex-col transition-all duration-300 z-30 shadow-xl fixed md:relative h-full -translate-x-full md:translate-x-0">
+        <!-- Logo Header -->
+        <div class="p-4 border-b border-emerald-800 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-500 p-2.5 rounded-xl text-white shadow-lg">
+                    <i class="fa-solid font-bold fa-cow text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide">AgriFarm Pro</h1>
+                    <p class="text-xs text-emerald-300 urdu-font">فارم مینجمنٹ سسٹم</p>
+                </div>
+            </div>
+            <button id="closeSidebar" class="md:hidden text-emerald-200 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all text-white bg-emerald-700/80 shadow-sm">
+                <i class="fa-solid fa-chart-line text-lg w-6 text-center text-emerald-300"></i>
+                <div class="text-left">
+                    <div>Dashboard</div>
+                    <div class="text-[10px] text-emerald-200 urdu-font">ڈیش بورڈ اور چارٹس</div>
+                </div>
+            </button>
+
+            <button onclick="switchTab('animals')" id="nav-animals" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 transition-all">
+                <i class="fa-solid fa-cow text-lg w-6 text-center text-emerald-300"></i>
+                <div class="text-left">
+                    <div>Animals & Purchase</div>
+                    <div class="text-[10px] text-emerald-300 urdu-font">جانوروں کی خریداری</div>
+                </div>
+            </button>
+
+            <button onclick="switchTab('weight')" id="nav-weight" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 transition-all">
+                <i class="fa-solid fa-weight-scale text-lg w-6 text-center text-emerald-300"></i>
+                <div class="text-left">
+                    <div>Weight Tracker</div>
+                    <div class="text-[10px] text-emerald-300 urdu-font">روزانہ وزنی ریکارڈ</div>
+                </div>
+            </button>
+
+            <button onclick="switchTab('feed')" id="nav-feed" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 transition-all">
+                <i class="fa-solid fa-wheat-awn text-lg w-6 text-center text-emerald-300"></i>
+                <div class="text-left">
+                    <div>Daily Feed & Expenses</div>
+                    <div class="text-[10px] text-emerald-300 urdu-font">خوراک اور اخراجات</div>
+                </div>
+            </button>
+
+            <button onclick="switchTab('consumption')" id="nav-consumption" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 transition-all">
+                <i class="fa-solid fa-calculator text-lg w-6 text-center text-emerald-300"></i>
+                <div class="text-left">
+                    <div>Per Animal Feed Intake</div>
+                    <div class="text-[10px] text-emerald-300 urdu-font">فی جانور خوراک کا حساب</div>
+                </div>
+            </button>
+
+            <button onclick="switchTab('sales')" id="nav-sales" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 transition-all">
+                <i class="fa-solid fa-hand-holding-dollar text-lg w-6 text-center text-emerald-300"></i>
+                <div class="text-left">
+                    <div>Sales & Profit/Loss</div>
+                    <div class="text-[10px] text-emerald-300 urdu-font">سیل اور نفع / نقصان</div>
+                </div>
+            </button>
+        </nav>
+
+        <!-- Footer / Quick Action -->
+        <div class="p-3 border-t border-emerald-800/80 bg-emerald-950/40">
+            <div class="bg-emerald-800/50 rounded-xl p-2.5 text-xs text-center text-emerald-200">
+                <span class="block font-medium">Automated Calculation Active</span>
+                <span class="text-[10px] text-emerald-300 urdu-font">خودکار حساب کتاب آن ہے</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+        <!-- TOP BAR -->
+        <header class="bg-white border-b border-gray-200 shadow-sm px-4 py-3 flex items-center justify-between z-20">
+            <div class="flex items-center gap-3">
+                <button id="openSidebar" class="md:hidden text-gray-600 hover:text-emerald-700 p-2 rounded-lg bg-gray-100">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <h2 id="pageTitle" class="text-lg md:text-xl font-bold text-gray-800">
+                    Dashboard Overview <span class="text-xs text-emerald-600 font-normal urdu-font ml-2">(ڈیش بورڈ خلاصہ)</span>
+                </h2>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex items-center gap-2">
+                <button onclick="openAnimalModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-medium px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="hidden sm:inline">Add Animal</span>
+                    <span class="urdu-font text-xs">(نیا جانور)</span>
+                </button>
+                <button onclick="openExpenseModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs md:text-sm font-medium px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span class="hidden sm:inline">Log Expense</span>
+                    <span class="urdu-font text-xs">(روزانہ خرچہ)</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN SCROLLABLE CONTENT BODY -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50/50">
+
+            <!-- TAB 1: DASHBOARD OVERVIEW -->
+            <section id="tab-dashboard" class="tab-content space-y-6">
+                <!-- Summary Metrics Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Total Animals -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Herd (کل جانور)</p>
+                                <h3 id="statTotalAnimals" class="text-2xl md:text-3xl font-extrabold text-gray-800 mt-1">0</h3>
+                            </div>
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
+                                <i class="fa-solid fa-cow text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3 flex items-center gap-1">
+                            <span id="statActiveAnimals" class="font-bold text-emerald-600">0</span> Active in Farm
+                        </p>
+                    </div>
+
+                    <!-- Total Purchasing Investment -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Purchase Cost (خریداری)</p>
+                                <h3 id="statTotalPurchase" class="text-xl md:text-2xl font-extrabold text-gray-800 mt-1">PKR 0</h3>
+                            </div>
+                            <div class="bg-blue-100 text-blue-700 p-3 rounded-xl">
+                                <i class="fa-solid fa-money-bill-wave text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3">Initial Livestock Investment</p>
+                    </div>
+
+                    <!-- Total Running Expenses -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Expenses (کل اخراجات)</p>
+                                <h3 id="statTotalExpenses" class="text-xl md:text-2xl font-extrabold text-rose-600 mt-1">PKR 0</h3>
+                            </div>
+                            <div class="bg-rose-100 text-rose-700 p-3 rounded-xl">
+                                <i class="fa-solid fa-wallet text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3">Feed, Labor, Bills & Medicine</p>
+                    </div>
+
+                    <!-- Net Estimated Profit/Loss -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Net Profit/Loss (نفع / نقصان)</p>
+                                <h3 id="statNetProfit" class="text-xl md:text-2xl font-extrabold text-emerald-600 mt-1">PKR 0</h3>
+                            </div>
+                            <div id="statProfitBadge" class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
+                                <i class="fa-solid fa-chart-line text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3">Estimated Current Value - Investment</p>
+                    </div>
+                </div>
+
+                <!-- CHARTS ROW -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Main Automated Profit & Loss Graph -->
+                    <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Financial Overview (مالیاتی تجزیہ)</h3>
+                                <p class="text-xs text-gray-500">Monthly Revenue vs Feed & Operating Expenses</p>
+                            </div>
+                            <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-medium border border-emerald-200 w-fit">
+                                Live Graph
+                            </span>
+                        </div>
+                        <div class="h-72 w-full">
+                            <canvas id="profitLossChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Expense Breakdown Donut Chart -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                        <div class="mb-4">
+                            <h3 class="font-bold text-gray-800 text-lg">Expense Breakdown (اخراجات کی تقسیم)</h3>
+                            <p class="text-xs text-gray-500">Sabaz Chara, Tori, Wanda, Labor & Bills</p>
+                        </div>
+                        <div class="h-64 w-full flex items-center justify-center">
+                            <canvas id="expenseBreakdownChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUICK SUMMARY TABLE: Top Performing Animals -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">Livestock Quick Monitor (جانوروں کی حالیہ صورتحال)</h3>
+                        <button onclick="switchTab('animals')" class="text-xs font-semibold text-emerald-600 hover:text-emerald-800">View All →</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead class="bg-gray-50 text-gray-600 font-semibold border-b border-gray-200">
+                                <tr>
+                                    <th class="p-3">Tag #</th>
+                                    <th class="p-3">Category</th>
+                                    <th class="p-3">Purchase Price</th>
+                                    <th class="p-3">Current Weight</th>
+                                    <th class="p-3">Est. Current Value</th>
+                                    <th class="p-3">Est. Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quickAnimalsTable" class="divide-y divide-gray-100 text-gray-700">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: ANIMAL INVENTORY & PURCHASING -->
+            <section id="tab-animals" class="tab-content hidden space-y-6">
+                <!-- Action Bar & Filter -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 justify-between md:items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="relative flex-1 md:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                            <input type="text" id="animalSearch" onkeyup="filterAnimals()" placeholder="Search Tag # or Breed..." class="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <select id="animalCategoryFilter" onchange="filterAnimals()" class="bg-gray-50 border border-gray-200 text-sm rounded-xl p-2 focus:ring-2 focus:ring-emerald-500">
+                            <option value="ALL">All Categories (تمام)</option>
+                            <option value="Bull/Bullock">Bull / Bullock (بیل)</option>
+                            <option value="Cow">Cow (گائے)</option>
+                            <option value="Buffalo">Buffalo (بھینس)</option>
+                            <option value="Goat/Sheep">Goat / Sheep (بکرا / چھترا)</option>
+                        </select>
+                    </div>
+                    <button onclick="openAnimalModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all">
+                        <i class="fa-solid fa-plus"></i> Add New Purchase (نئی خریداری)
+                    </button>
+                </div>
+
+                <!-- Animals Data Table -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead class="bg-emerald-900 text-white font-medium">
+                                <tr>
+                                    <th class="p-3.5">Tag ID (ٹیگ نمبر)</th>
+                                    <th class="p-3.5">Category & Breed</th>
+                                    <th class="p-3.5">Purchase Date</th>
+                                    <th class="p-3.5">Purchase Weight</th>
+                                    <th class="p-3.5">Purchase Cost (PKR)</th>
+                                    <th class="p-3.5">Status</th>
+                                    <th class="p-3.5 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="animalsTableBody" class="divide-y divide-gray-100 text-gray-700">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: DAILY WEIGHT TRACKER -->
+            <section id="tab-weight" class="tab-content hidden space-y-6">
+                <!-- Weight Header & Form Entry -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4 md:col-span-1">
+                        <h3 class="font-bold text-gray-800 text-base border-b pb-2">Log New Weight Check <br><span class="text-xs text-emerald-600 font-normal urdu-font">(وزن کا نیا اندراج)</span></h3>
+                        
+                        <form id="weightForm" onsubmit="saveWeightLog(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Select Animal (جانور کا انتخاب)</label>
+                                <select id="weightAnimalSelect" required class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                    <!-- Dynamic options -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Date (تاریخ)</label>
+                                <input type="date" id="weightDate" required class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">New Weight in KG (نیا وزن کلو گرام)</label>
+                                <input type="number" id="weightKg" min="1" step="0.5" required placeholder="e.g. 245" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl shadow-sm text-sm transition-all">
+                                Save Weight Log (اندراج محفوظ کریں)
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Weight History Table -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm md:col-span-2 space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <h3 class="font-bold text-gray-800 text-base">Growth Records & History <span class="text-xs text-gray-500 font-normal urdu-font">(وزن کی سوانح عمری)</span></h3>
+                            <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-medium">Daily Gain Monitor</span>
+                        </div>
+                        <div class="overflow-x-auto max-h-96">
+                            <table class="w-full text-left border-collapse text-xs md:text-sm">
+                                <thead class="bg-gray-100 text-gray-600 sticky top-0">
+                                    <tr>
+                                        <th class="p-3">Date</th>
+                                        <th class="p-3">Tag ID</th>
+                                        <th class="p-3">Previous Wt</th>
+                                        <th class="p-3">Recorded Wt</th>
+                                        <th class="p-3">Gain / Loss</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="weightHistoryTable" class="divide-y divide-gray-100">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: DAILY FEED & EXPENSE TRACKER -->
+            <section id="tab-feed" class="tab-content hidden space-y-6">
+                <!-- Summary Card for Feed Categories -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b pb-3">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg">Daily Farm Expenses & Feed Log</h3>
+                            <p class="text-xs text-gray-500 urdu-font">سبز چارہ ، توڑی ، ونڈا ، چوکر ، لیبر اور دیگر بل کے اخراجات</p>
+                        </div>
+                        <button onclick="openExpenseModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Add Expense (نیا خرچہ کاٹیں)
+                        </button>
+                    </div>
+
+                    <!-- Expense Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead class="bg-amber-800 text-white font-medium">
+                                <tr>
+                                    <th class="p-3">Date</th>
+                                    <th class="p-3">Sabaz Chara (سبز چارہ)</th>
+                                    <th class="p-3">Tori (توڑی)</th>
+                                    <th class="p-3">Wanda (ونڈا)</th>
+                                    <th class="p-3">Chokar (چوکر)</th>
+                                    <th class="p-3">Labor (لیبر)</th>
+                                    <th class="p-3">Bills / Medicine</th>
+                                    <th class="p-3 font-bold">Total Daily Cost</th>
+                                    <th class="p-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseTableBody" class="divide-y divide-gray-100">
+                                <!-- Dynamic entries -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: PER ANIMAL FEED INTAKE & COST ANALYSIS -->
+            <section id="tab-consumption" class="tab-content hidden space-y-6">
+                <div class="bg-emerald-900 text-white p-6 rounded-2xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold">Per Animal Daily Feed & Cost Breakdown</h3>
+                        <p class="text-xs text-emerald-200 mt-1 urdu-font">ہر ایک جانور نے روزانہ کتنا کھایا اور کتنے روپے کی خوراک کھائی</p>
+                    </div>
+                    <div class="bg-emerald-800 px-4 py-2 rounded-xl border border-emerald-700 text-right">
+                        <span class="text-xs text-emerald-300 block">Current Active Herd Count</span>
+                        <span id="activeHerdCount" class="text-2xl font-black">0 Heads</span>
+                    </div>
+                </div>
+
+                <!-- Calculated Table -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Automated Cost Allocation Per Animal</span>
+                        <span class="text-xs text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 font-semibold">Equal Distribution Mode</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead class="bg-gray-100 text-gray-700 font-semibold border-b">
+                                <tr>
+                                    <th class="p-3.5">Tag ID</th>
+                                    <th class="p-3.5">Category</th>
+                                    <th class="p-3.5">Est. Daily Intake (KG)</th>
+                                    <th class="p-3.5">Daily Feed Cost / Head</th>
+                                    <th class="p-3.5">Days on Farm</th>
+                                    <th class="p-3.5 font-bold text-emerald-800">Total Amount Eaten (کل خوراک خرچ)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="consumptionTableBody" class="divide-y divide-gray-100">
+                                <!-- Dynamic calculated content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: SALES & PROFIT/LOSS REPORT -->
+            <section id="tab-sales" class="tab-content hidden space-y-6">
+                <!-- Record Sale Form & Summary -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4 lg:col-span-1">
+                        <h3 class="font-bold text-gray-800 text-base border-b pb-2">Record Animal Sale <br><span class="text-xs text-emerald-600 font-normal urdu-font">(جانور کی فروخت کا اندراج)</span></h3>
+                        <form id="saleForm" onsubmit="saveSaleRecord(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Select Animal (جانور کا انتخاب)</label>
+                                <select id="saleAnimalSelect" required class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                    <!-- Active animals list -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Sale Date (تاریخ فروخت)</label>
+                                <input type="date" id="saleDate" required class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Final Sale Price (PKR) (فروخت کی قیمت)</label>
+                                <input type="number" id="salePrice" min="1" required placeholder="e.g. 280000" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl shadow-sm text-sm transition-all">
+                                Finalize & Record Sale (فروخت مکمل کریں)
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Sold Animals Performance Ledger -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2 space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <h3 class="font-bold text-gray-800 text-base">Completed Sales Ledger <span class="text-xs text-gray-500 font-normal urdu-font">(فروخت شدہ جانوروں کا نفع و نقصان)</span></h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs md:text-sm">
+                                <thead class="bg-gray-100 text-gray-600">
+                                    <tr>
+                                        <th class="p-3">Tag #</th>
+                                        <th class="p-3">Purchase Price</th>
+                                        <th class="p-3">Total Feed Cost</th>
+                                        <th class="p-3">Sale Price</th>
+                                        <th class="p-3">Net Profit / Loss</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesLedgerBody" class="divide-y divide-gray-100">
+                                    <!-- Dynamic Sales list -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL 1: ADD NEW ANIMAL -->
+    <div id="animalModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-fade-in">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="font-bold text-lg text-gray-800">Add New Animal Purchase <br><span class="text-xs text-emerald-600 font-normal urdu-font">(نئے جانور کی خریداری)</span></h3>
+                <button onclick="closeAnimalModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="addAnimalForm" onsubmit="saveAnimal(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Tag / Ear ID Number (ٹیگ نمبر)</label>
+                    <input type="text" id="modalTagId" required placeholder="e.g. PK-882" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Category (قسم)</label>
+                        <select id="modalCategory" required class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                            <option value="Bull/Bullock">Bull / Bullock (بیل)</option>
+                            <option value="Cow">Cow (گائے)</option>
+                            <option value="Buffalo">Buffalo (بھینس)</option>
+                            <option value="Goat/Sheep">Goat / Sheep (بکرا / چھترا)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Breed (نسل)</label>
+                        <input type="text" id="modalBreed" placeholder="e.g. Sahiwal, Cholistani" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Purchase Date (تاریخ)</label>
+                        <input type="date" id="modalPurchaseDate" required class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Initial Weight (KG)</label>
+                        <input type="number" id="modalWeight" min="1" required placeholder="e.g. 180" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Purchase Price - PKR (خریداری قیمت)</label>
+                    <input type="number" id="modalPrice" min="0" required placeholder="e.g. 155000" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="pt-3 flex gap-2">
+                    <button type="button" onclick="closeAnimalModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium">Cancel</button>
+                    <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-sm font-medium shadow-sm">Save Animal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: LOG DAILY EXPENSE -->
+    <div id="expenseModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="font-bold text-lg text-gray-800">Log Daily Farm Feed & Expense <br><span class="text-xs text-amber-600 font-normal urdu-font">(روزانہ خوراک اور دیگر اخراجات درج کریں)</span></h3>
+                <button onclick="closeExpenseModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="addExpenseForm" onsubmit="saveExpense(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Expense Date (تاریخ)</label>
+                    <input type="date" id="expDate" required class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Sabaz Chara / Green Fodder (PKR)</label>
+                        <input type="number" id="expChara" min="0" value="0" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Tori / Dry Straw (PKR)</label>
+                        <input type="number" id="expTori" min="0" value="0" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Wanda / Concentrate Feed (PKR)</label>
+                        <input type="number" id="expWanda" min="0" value="0" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Chokar / Wheat Bran (PKR)</label>
+                        <input type="number" id="expChokar" min="0" value="0" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Labor Cost (لیبر مزدوری)</label>
+                        <input type="number" id="expLabor" min="0" value="0" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bills & Medicine (میڈیسن اور دیگر)</label>
+                        <input type="number" id="expBills" min="0" value="0" class="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <div class="pt-3 flex gap-2">
+                    <button type="button" onclick="closeExpenseModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium">Cancel</button>
+                    <button type="submit" class="w-1/2 bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-sm font-medium shadow-sm">Record Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // ESTIMATED LIVE MEAT VALUE PER KG FOR AUTOMATED PROFIT/LOSS CALCULATION
+        const CURRENT_ESTIMATED_RATE_PER_KG = 950; // PKR per KG live weight estimate
+
+        // INITIAL STATE MANAGEMENT (Pre-populated sample livestock data)
+        let animals = JSON.parse(localStorage.getItem('farm_animals')) || [
+            { id: '1', tag: 'PK-101', category: 'Bull/Bullock', breed: 'Sahiwal', purchaseDate: '2026-09-01', purchaseWeight: 220, currentWeight: 265, purchasePrice: 160000, status: 'Active', salePrice: 0, saleDate: null },
+            { id: '2', tag: 'PK-102', category: 'Cow', breed: 'Cholistani', purchaseDate: '2026-09-10', purchaseWeight: 190, currentWeight: 225, purchasePrice: 140000, status: 'Active', salePrice: 0, saleDate: null },
+            { id: '3', tag: 'PK-103', category: 'Buffalo', breed: 'Nili Ravi', purchaseDate: '2026-08-15', purchaseWeight: 310, currentWeight: 360, purchasePrice: 220000, status: 'Active', salePrice: 0, saleDate: null },
+            { id: '4', tag: 'PK-104', category: 'Goat/Sheep', breed: 'Teddah', purchaseDate: '2026-09-20', purchaseWeight: 35, currentWeight: 42, purchasePrice: 32000, status: 'Active', salePrice: 0, saleDate: null }
+        ];
+
+        let weightLogs = JSON.parse(localStorage.getItem('farm_weight_logs')) || [
+            { id: 'w1', animalId: '1', date: '2026-09-15', prevWeight: 220, recordedWeight: 240 },
+            { id: 'w2', animalId: '1', date: '2026-10-01', prevWeight: 240, recordedWeight: 265 },
+            { id: 'w3', animalId: '2', date: '2026-09-25', prevWeight: 190, recordedWeight: 225 }
+        ];
+
+        let expenses = JSON.parse(localStorage.getItem('farm_expenses')) || [
+            { id: 'e1', date: '2026-10-25', chara: 3500, tori: 1500, wanda: 4200, chokar: 1200, labor: 2000, bills: 500, total: 12900 },
+            { id: 'e2', date: '2026-10-26', chara: 3600, tori: 1500, wanda: 4200, chokar: 1200, labor: 2000, bills: 0, total: 12500 },
+            { id: 'e3', date: '2026-10-27', chara: 3500, tori: 1600, wanda: 4500, chokar: 1100, labor: 2000, bills: 800, total: 13500 }
+        ];
+
+        let chartInstances = {};
+
+        // INITIALIZATION
+        window.onload = function() {
+            // Set default date inputs to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('weightDate').value = today;
+            document.getElementById('expDate').value = today;
+            document.getElementById('modalPurchaseDate').value = today;
+            document.getElementById('saleDate').value = today;
+
+            // Setup Mobile Navigation Sidebar
+            document.getElementById('openSidebar').onclick = () => document.getElementById('sidebar').classList.remove('-translate-x-full');
+            document.getElementById('closeSidebar').onclick = () => document.getElementById('sidebar').classList.add('-translate-x-full');
+
+            // Render Entire Dashboard & System
+            refreshSystem();
+        };
+
+        // SAVE DATA TO LOCALSTORAGE
+        function saveData() {
+            localStorage.setItem('farm_animals', JSON.stringify(animals));
+            localStorage.setItem('farm_weight_logs', JSON.stringify(weightLogs));
+            localStorage.setItem('farm_expenses', JSON.stringify(expenses));
+        }
+
+        // FULL REFRESH SYSTEM & UI recalculations
+        function refreshSystem() {
+            saveData();
+            updateDashboardMetrics();
+            renderCharts();
+            renderAnimalsTable();
+            renderWeightLogs();
+            renderExpenseTable();
+            renderFeedIntakeAnalysis();
+            populateSelectOptions();
+            renderSalesLedger();
+        }
+
+        // TAB NAVIGATION SYSTEM
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('bg-emerald-700/80', 'shadow-sm');
+                el.classList.add('hover:bg-emerald-800/60');
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if(activeNav) {
+                activeNav.classList.add('bg-emerald-700/80', 'shadow-sm');
+                activeNav.classList.remove('hover:bg-emerald-800/60');
+            }
+
+            // Mobile menu close on nav
+            if(window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
+
+            // Update Header Title Text
+            const titles = {
+                'dashboard': 'Dashboard Overview <span class="text-xs text-emerald-600 font-normal urdu-font ml-2">(ڈیش بورڈ خلاصہ)</span>',
+                'animals': 'Animal Purchasing & Inventory <span class="text-xs text-emerald-600 font-normal urdu-font ml-2">(جانوروں کی خریداری و فہرست)</span>',
+                'weight': 'Daily Weight Monitoring <span class="text-xs text-emerald-600 font-normal urdu-font ml-2">(وزن کا ریکارڈ)</span>',
+                'feed': 'Daily Feed & Farm Expenses <span class="text-xs text-emerald-600 font-normal urdu-font ml-2">(روزانہ کا خرچہ و چارہ)</span>',
+                'consumption': 'Per Animal Feed Intake Analysis <span class="text-xs text-emerald-600 font-normal urdu-font ml-2">(فی جانور خوراک کا حساب)</span>',
+                'sales': 'Sales & Profit/Loss Ledger <span class="text-xs text-emerald-600 font-normal urdu-font ml-2">(فروخت اور نفع نقصان)</span>'
+            };
+            document.getElementById('pageTitle').innerHTML = titles[tabName] || 'Farm Management System';
+        }
+
+        // CALCULATION ENGINE & METRICS
+        function updateDashboardMetrics() {
+            const activeAnimals = animals.filter(a => a.status === 'Active');
+            const totalAnimalsCount = animals.length;
+            
+            // Financial sums
+            const totalPurchaseCost = animals.reduce((sum, a) => sum + Number(a.purchasePrice || 0), 0);
+            const totalExpensesCost = expenses.reduce((sum, e) => sum + Number(e.total || 0), 0);
+            
+            // Estimated Current Herd Market Value based on live weight
+            const activeEstimatedValue = activeAnimals.reduce((sum, a) => sum + (Number(a.currentWeight || 0) * CURRENT_ESTIMATED_RATE_PER_KG), 0);
+            
+            // Completed Sales Value
+            const totalSalesRevenue = animals.filter(a => a.status === 'Sold').reduce((sum, a) => sum + Number(a.salePrice || 0), 0);
+
+            // Estimated Net Profit / Loss = (Active Est Value + Sales Revenue) - (Total Purchase + Expenses)
+            const netProfitValue = (activeEstimatedValue + totalSalesRevenue) - (totalPurchaseCost + totalExpensesCost);
+
+            // DOM Updates
+            document.getElementById('statTotalAnimals').innerText = totalAnimalsCount;
+            document.getElementById('statActiveAnimals').innerText = activeAnimals.length;
+            document.getElementById('statTotalPurchase').innerText = 'PKR ' + totalPurchaseCost.toLocaleString();
+            document.getElementById('statTotalExpenses').innerText = 'PKR ' + totalExpensesCost.toLocaleString();
+            
+            const profitElem = document.getElementById('statNetProfit');
+            profitElem.innerText = 'PKR ' + netProfitValue.toLocaleString();
+            if(netProfitValue >= 0) {
+                profitElem.className = 'text-xl md:text-2xl font-extrabold text-emerald-600 mt-1';
+            } else {
+                profitElem.className = 'text-xl md:text-2xl font-extrabold text-rose-600 mt-1';
+            }
+
+            // Populate Quick Animals Table on Dashboard
+            const quickBody = document.getElementById('quickAnimalsTable');
+            quickBody.innerHTML = activeAnimals.slice(0, 5).map(a => {
+                const estValue = a.currentWeight * CURRENT_ESTIMATED_RATE_PER_KG;
+                const estProfit = estValue - a.purchasePrice;
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 font-semibold text-emerald-800">${a.tag}</td>
+                        <td class="p-3">${a.category}</td>
+                        <td class="p-3">PKR ${Number(a.purchasePrice).toLocaleString()}</td>
+                        <td class="p-3 font-bold text-gray-700">${a.currentWeight} KG</td>
+                        <td class="p-3">PKR ${estValue.toLocaleString()}</td>
+                        <td class="p-3 font-bold ${estProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${estProfit >= 0 ? '+' : ''}PKR ${estProfit.toLocaleString()}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // CHARTS RENDERING ENGINE (Chart.js)
+        function renderCharts() {
+            // Destroy existing instances if re-rendering
+            if(chartInstances.profitLoss) chartInstances.profitLoss.destroy();
+            if(chartInstances.expenseBreakdown) chartInstances.expenseBreakdown.destroy();
+
+            // 1. Profit Loss Line/Bar Chart
+            const ctx1 = document.getElementById('profitLossChart').getContext('2d');
+            const expTotal = expenses.reduce((s, e) => s + Number(e.total), 0);
+            const activeVal = animals.filter(a => a.status === 'Active').reduce((s, a) => s + (a.currentWeight * CURRENT_ESTIMATED_RATE_PER_KG), 0);
+            const purchaseTotal = animals.reduce((s, a) => s + Number(a.purchasePrice), 0);
+
+            chartInstances.profitLoss = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Purchase Investment', 'Total Expenses', 'Estimated Herd Value', 'Est. Net Return'],
+                    datasets: [{
+                        label: 'Amount in PKR',
+                        data: [purchaseTotal, expTotal, activeVal, (activeVal - (purchaseTotal + expTotal))],
+                        backgroundColor: ['#3b82f6', '#f43f5e', '#10b981', '#f59e0b'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 2. Expense Category Breakdown Donut Chart
+            const totalChara = expenses.reduce((s, e) => s + Number(e.chara || 0), 0);
+            const totalTori = expenses.reduce((s, e) => s + Number(e.tori || 0), 0);
+            const totalWanda = expenses.reduce((s, e) => s + Number(e.wanda || 0), 0);
+            const totalChokar = expenses.reduce((s, e) => s + Number(e.chokar || 0), 0);
+            const totalLabor = expenses.reduce((s, e) => s + Number(e.labor || 0), 0);
+            const totalBills = expenses.reduce((s, e) => s + Number(e.bills || 0), 0);
+
+            const ctx2 = document.getElementById('expenseBreakdownChart').getContext('2d');
+            chartInstances.expenseBreakdown = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sabaz Chara', 'Tori', 'Wanda', 'Chokar', 'Labor Cost', 'Bills/Med'],
+                    datasets: [{
+                        data: [totalChara, totalTori, totalWanda, totalChokar, totalLabor, totalBills],
+                        backgroundColor: ['#10b981', '#f59e0b', '#8b5cf6', '#3b82f6', '#ef4444', '#64748b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
+                }
+            });
+        }
+
+        // ANIMALS TABLE RENDER
+        function renderAnimalsTable() {
+            const tbody = document.getElementById('animalsTableBody');
+            tbody.innerHTML = animals.map(a => `
+                <tr class="hover:bg-gray-50 border-b">
+                    <td class="p-3.5 font-bold text-emerald-800">${a.tag}</td>
+                    <td class="p-3.5">
+                        <span class="font-medium text-gray-800">${a.category}</span>
+                        <span class="block text-xs text-gray-500">${a.breed || 'Standard'}</span>
+                    </td>
+                    <td class="p-3.5 text-gray-600">${a.purchaseDate}</td>
+                    <td class="p-3.5 font-semibold">${a.purchaseWeight} KG</td>
+                    <td class="p-3.5 font-medium">PKR ${Number(a.purchasePrice).toLocaleString()}</td>
+                    <td class="p-3.5">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${a.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}">
+                            ${a.status}
+                        </span>
+                    </td>
+                    <td class="p-3.5 text-center">
+                        <button onclick="deleteAnimal('${a.id}')" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 transition-all">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterAnimals() {
+            const search = document.getElementById('animalSearch').value.toLowerCase();
+            const cat = document.getElementById('animalCategoryFilter').value;
+
+            const rows = document.querySelectorAll('#animalsTableBody tr');
+            animals.forEach((a, index) => {
+                const matchesSearch = a.tag.toLowerCase().includes(search) || (a.breed && a.breed.toLowerCase().includes(search));
+                const matchesCat = cat === 'ALL' || a.category === cat;
+                if (rows[index]) {
+                    rows[index].style.display = (matchesSearch && matchesCat) ? '' : 'none';
+                }
+            });
+        }
+
+        // ADD NEW ANIMAL LOGIC
+        function openAnimalModal() { document.getElementById('animalModal').classList.remove('hidden'); }
+        function closeAnimalModal() { document.getElementById('animalModal').classList.add('hidden'); }
+
+        function saveAnimal(e) {
+            e.preventDefault();
+            const tag = document.getElementById('modalTagId').value;
+            const category = document.getElementById('modalCategory').value;
+            const breed = document.getElementById('modalBreed').value;
+            const purchaseDate = document.getElementById('modalPurchaseDate').value;
+            const weight = Number(document.getElementById('modalWeight').value);
+            const price = Number(document.getElementById('modalPrice').value);
+
+            const newAnimal = {
+                id: Date.now().toString(),
+                tag, category, breed, purchaseDate,
+                purchaseWeight: weight,
+                currentWeight: weight,
+                purchasePrice: price,
+                status: 'Active',
+                salePrice: 0,
+                saleDate: null
+            };
+
+            animals.push(newAnimal);
+            closeAnimalModal();
+            document.getElementById('addAnimalForm').reset();
+            refreshSystem();
+        }
+
+        function deleteAnimal(id) {
+            if(confirm('Are you sure you want to delete this animal record?')) {
+                animals = animals.filter(a => a.id !== id);
+                refreshSystem();
+            }
+        }
+
+        // WEIGHT TRACKER LOGIC
+        function renderWeightLogs() {
+            const tbody = document.getElementById('weightHistoryTable');
+            tbody.innerHTML = weightLogs.map(w => {
+                const animal = animals.find(a => a.id === w.animalId);
+                const tag = animal ? animal.tag : 'Deleted';
+                const gain = w.recordedWeight - w.prevWeight;
+                return `
+                    <tr class="hover:bg-gray-50 border-b">
+                        <td class="p-3 text-gray-600">${w.date}</td>
+                        <td class="p-3 font-bold text-emerald-800">${tag}</td>
+                        <td class="p-3 text-gray-500">${w.prevWeight} KG</td>
+                        <td class="p-3 font-semibold text-gray-800">${w.recordedWeight} KG</td>
+                        <td class="p-3 font-bold ${gain >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${gain >= 0 ? '+' : ''}${gain} KG
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function saveWeightLog(e) {
+            e.preventDefault();
+            const animalId = document.getElementById('weightAnimalSelect').value;
+            const date = document.getElementById('weightDate').value;
+            const newWeight = Number(document.getElementById('weightKg').value);
+
+            const animal = animals.find(a => a.id === animalId);
+            if(!animal) return;
+
+            const prevWeight = animal.currentWeight;
+            
+            // Add Log
+            weightLogs.unshift({
+                id: Date.now().toString(),
+                animalId, date, prevWeight, recordedWeight: newWeight
+            });
+
+            // Update Current Weight on Animal
+            animal.currentWeight = newWeight;
+
+            document.getElementById('weightForm').reset();
+            refreshSystem();
+        }
+
+        // EXPENSE TRACKER LOGIC
+        function openExpenseModal() { document.getElementById('expenseModal').classList.remove('hidden'); }
+        function closeExpenseModal() { document.getElementById('expenseModal').classList.add('hidden'); }
+
+        function saveExpense(e) {
+            e.preventDefault();
+            const date = document.getElementById('expDate').value;
+            const chara = Number(document.getElementById('expChara').value || 0);
+            const tori = Number(document.getElementById('expTori').value || 0);
+            const wanda = Number(document.getElementById('expWanda').value || 0);
+            const chokar = Number(document.getElementById('expChokar').value || 0);
+            const labor = Number(document.getElementById('expLabor').value || 0);
+            const bills = Number(document.getElementById('expBills').value || 0);
+
+            const total = chara + tori + wanda + chokar + labor + bills;
+
+            expenses.unshift({
+                id: Date.now().toString(),
+                date, chara, tori, wanda, chokar, labor, bills, total
+            });
+
+            closeExpenseModal();
+            document.getElementById('addExpenseForm').reset();
+            refreshSystem();
+        }
+
+        function renderExpenseTable() {
+            const tbody = document.getElementById('expenseTableBody');
+            tbody.innerHTML = expenses.map(e => `
+                <tr class="hover:bg-gray-50 border-b">
+                    <td class="p-3 font-medium text-gray-700">${e.date}</td>
+                    <td class="p-3">PKR ${Number(e.chara).toLocaleString()}</td>
+                    <td class="p-3">PKR ${Number(e.tori).toLocaleString()}</td>
+                    <td class="p-3">PKR ${Number(e.wanda).toLocaleString()}</td>
+                    <td class="p-3">PKR ${Number(e.chokar).toLocaleString()}</td>
+                    <td class="p-3">PKR ${Number(e.labor).toLocaleString()}</td>
+                    <td class="p-3">PKR ${Number(e.bills).toLocaleString()}</td>
+                    <td class="p-3 font-bold text-amber-700">PKR ${Number(e.total).toLocaleString()}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteExpense('${e.id}')" class="text-rose-500 hover:text-rose-700">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteExpense(id) {
+            if(confirm('Delete this expense record?')) {
+                expenses = expenses.filter(e => e.id !== id);
+                refreshSystem();
+            }
+        }
+
+        // PER ANIMAL FEED INTAKE AUTOMATED ENGINE
+        function renderFeedIntakeAnalysis() {
+            const activeAnimals = animals.filter(a => a.status === 'Active');
+            document.getElementById('activeHerdCount').innerText = `${activeAnimals.length} Heads`;
+
+            const totalFarmExpenses = expenses.reduce((s, e) => s + Number(e.total || 0), 0);
+            const totalActiveAnimalsCount = activeAnimals.length || 1;
+
+            // Average daily expense calculated across recorded expense days
+            const expenseDaysCount = expenses.length || 1;
+            const avgDailyFarmExpense = totalFarmExpenses / expenseDaysCount;
+            const avgDailyCostPerHead = avgDailyFarmExpense / totalActiveAnimalsCount;
+
+            const tbody = document.getElementById('consumptionTableBody');
+            tbody.innerHTML = activeAnimals.map(a => {
+                // Calculate Days on farm
+                const start = new Date(a.purchaseDate);
+                const now = new Date();
+                const diffTime = Math.abs(now - start);
+                const daysOnFarm = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+                // Estimate Intake (Approx 2.5% of body weight for roughage/concentrate)
+                const estimatedKgIntake = (a.currentWeight * 0.035).toFixed(1);
+                const totalAmountEaten = (avgDailyCostPerHead * daysOnFarm).toFixed(0);
+
+                return `
+                    <tr class="hover:bg-gray-50 border-b">
+                        <td class="p-3.5 font-bold text-emerald-800">${a.tag}</td>
+                        <td class="p-3.5 text-gray-700">${a.category}</td>
+                        <td class="p-3.5 font-semibold text-gray-800">${estimatedKgIntake} KG / day</td>
+                        <td class="p-3.5 text-amber-700 font-medium">PKR ${Math.round(avgDailyCostPerHead)} / day</td>
+                        <td class="p-3.5 text-gray-600">${daysOnFarm} Days</td>
+                        <td class="p-3.5 font-extrabold text-emerald-700">PKR ${Number(totalAmountEaten).toLocaleString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // POPULATE DROPDOWNS DYNAMICALLY
+        function populateSelectOptions() {
+            const activeAnimals = animals.filter(a => a.status === 'Active');
+            const optionsHtml = activeAnimals.map(a => `<option value="${a.id}">${a.tag} - ${a.category} (${a.currentWeight} KG)</option>`).join('');
+
+            document.getElementById('weightAnimalSelect').innerHTML = optionsHtml || '<option value="">No Active Animals</option>';
+            document.getElementById('saleAnimalSelect').innerHTML = optionsHtml || '<option value="">No Active Animals</option>';
+        }
+
+        // SALES & PROFIT/LOSS LEDGER
+        function saveSaleRecord(e) {
+            e.preventDefault();
+            const animalId = document.getElementById('saleAnimalSelect').value;
+            const saleDate = document.getElementById('saleDate').value;
+            const salePrice = Number(document.getElementById('salePrice').value);
+
+            const animal = animals.find(a => a.id === animalId);
+            if(!animal) return;
+
+            animal.status = 'Sold';
+            animal.saleDate = saleDate;
+            animal.salePrice = salePrice;
+
+            document.getElementById('saleForm').reset();
+            refreshSystem();
+        }
+
+        function renderSalesLedger() {
+            const soldAnimals = animals.filter(a => a.status === 'Sold');
+            const totalFarmExpenses = expenses.reduce((s, e) => s + Number(e.total || 0), 0);
+            const expenseDaysCount = expenses.length || 1;
+            const avgDailyCostPerHead = (totalFarmExpenses / expenseDaysCount) / (animals.length || 1);
+
+            const tbody = document.getElementById('salesLedgerBody');
+            if(soldAnimals.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No sold animals recorded yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = soldAnimals.map(a => {
+                const start = new Date(a.purchaseDate);
+                const end = new Date(a.saleDate || new Date());
+                const daysOnFarm = Math.max(1, Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)));
+                const estFeedCost = avgDailyCostPerHead * daysOnFarm;
+                const netProfit = a.salePrice - (a.purchasePrice + estFeedCost);
+
+                return `
+                    <tr class="hover:bg-gray-50 border-b">
+                        <td class="p-3 font-bold text-emerald-800">${a.tag}</td>
+                        <td class="p-3">PKR ${Number(a.purchasePrice).toLocaleString()}</td>
+                        <td class="p-3 text-amber-700">PKR ${Math.round(estFeedCost).toLocaleString()}</td>
+                        <td class="p-3 font-semibold">PKR ${Number(a.salePrice).toLocaleString()}</td>
+                        <td class="p-3 font-extrabold ${netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${netProfit >= 0 ? '+' : ''}PKR ${Math.round(netProfit).toLocaleString()}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
